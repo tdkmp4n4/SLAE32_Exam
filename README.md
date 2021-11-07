@@ -3,7 +3,7 @@ This course focuses on teaching the basics of 32-bit assembly language for the I
 
 This repository contains all the resources developed by the student David Álvarez Robles in order to pass the exam and get SLAE32 certification. The following assignments are implemented:
 
-## Assignment 1 - Shell rind TCP
+## Assignment 1 - Shell Bind TCP
 Detailed blog post: 
   - Create a Shell_Bind_TCP shellcode
       - Binds to a port
