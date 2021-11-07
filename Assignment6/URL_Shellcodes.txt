@@ -1,0 +1,3 @@
+adduser_r00t 		->	http://shell-storm.org/shellcode/files/shellcode-211.php
+shutdown_now 		->	http://shell-storm.org/shellcode/files/shellcode-876.php
+disable_modsecurity	->	http://shell-storm.org/shellcode/files/shellcode-578.php

